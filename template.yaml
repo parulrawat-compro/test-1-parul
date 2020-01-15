@@ -1,0 +1,94 @@
+AWSTemplateFormatVersion: '2010-09-09'
+# is the macro, cloudformation uses to check the execution order and scope, here declares as AWS SAM Template
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  test-1-parul
+
+  Sample SAM Template for test-1-parul
+  
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+# Unique to AWS SAM, defines properties(runtime, Memory, VPCConfig, Environment, and Cors) that are common to all your serverless functions and APIs.
+# You can use Globals to override all the properties of implicit APIs.
+Globals:
+  Function:
+    Runtime: nodejs12.x
+    Timeout: 3
+
+# This section contains reference information for all AWS resource and property types that are supported by AWS CloudFormation.
+# lambda function - AWS::Lambda::Function
+# api gateway - AWS::ApiGatewayV2::Api
+Resources:
+  HelloWorldFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: hello-world/
+      Handler: app.lambdaHandler
+      Events:
+        HelloWorld:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /hello
+            Method: get
+  CodeBuildProjectCredentials:
+    Type: AWS::CodeBuild::SourceCredential
+    Properties: 
+      AuthType: PERSONAL_ACCESS_TOKEN
+      ServerType: GITHUB
+      Token: 653145f21501ff1d59b9350d6d6406e42a344492
+  CodeBuildProjectTest1:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: MyProject
+      ServiceRole: test-1-parul-HelloWorldFunctionRole-Z6K6RTRR8X9Y
+      Artifacts:
+        Type: NO_ARTIFACTS
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/standard:1.0
+      Source:
+        Type: GITHUB
+        Location: https://github.com/parulrawat-compro/test-1-parul.git
+      Triggers:
+        Webhook: true
+        FilterGroups:
+          - - Type: EVENT
+              Pattern: PULL_REQUEST_CREATED,PULL_REQUEST_UPDATED
+            - Type: BASE_REF
+              Pattern: ^refs/heads/master$
+              ExcludeMatchedPattern: false
+            - Type: ACTOR_ACCOUNT_ID
+              Pattern: 12345
+              ExcludeMatchedPattern: true
+          - - Type: EVENT
+              Pattern: PUSH
+            - Type: HEAD_REF
+              Pattern: ^refs/heads/.*
+            - Type: FILE_PATH
+              Pattern: READ_ME
+              ExcludeMatchedPattern: true
+  # HelloWorldparul2Function:
+  #   Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+  #   Properties:
+  #     CodeUri: hello-world/
+  #     Handler: app.lambdaHandler
+  #     Events:
+  #       HelloWorldparul2:
+  #         Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+  #         Properties:
+  #           Path: /hello
+  #           Method: get
+  
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  HelloWorldApi:
+    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
+  HelloWorldFunction:
+    Description: "Hello World Lambda Function ARN"
+    Value: !GetAtt HelloWorldFunction.Arn
+  HelloWorldFunctionIamRole:
+    Description: "Implicit IAM Role created for Hello World function"
+    Value: !GetAtt HelloWorldFunctionRole.Arn
