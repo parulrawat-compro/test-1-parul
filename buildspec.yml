@@ -17,7 +17,7 @@ phases:
       # Use AWS SAM to package the application by using AWS CloudFormation
       # - sam package --template template.yaml --s3-bucket $S3_BUCKET --output-template template-export.yml
       - aws cloudformation package --template-file template.yaml --s3-bucket aws-sam-cli-managed-default-samclisourcebucket-nqukhe41fq2 --output-template-file packaged-template.yaml
-      - aws cloudformation deploy --template-file ./packaged.yaml --stack-name test-1-parul --capabilities CAPABILITY_IAM
+      - aws cloudformation deploy --template-file ./packaged-template.yaml --stack-name test-1-parul --capabilities CAPABILITY_IAM
 artifacts:
   type: zip
   files:
