@@ -34,7 +34,7 @@ Resources:
     Properties: 
       AuthType: PERSONAL_ACCESS_TOKEN
       ServerType: GITHUB
-      Token: 653145f21501ff1d59b9350d6d6406e42a344492
+      Token: dcbc061b532a5310b309dbe90807974fec3cfda5
   CodeBuildProjectTest1:
     Type: AWS::CodeBuild::Project
     Properties:
