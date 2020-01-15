@@ -20,8 +20,9 @@ exports.lambdaHandler = async (event, context) => {
         response = {
             'statusCode': 200,
             'body': JSON.stringify({
-                message: 'hello world',
-                queryParams: event.queryStringParameters
+                message: 'hello world - after pushing to git',
+                queryParams: event.queryStringParameters,
+
                 // location: ret.data.trim()
             })
         }
