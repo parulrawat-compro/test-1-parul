@@ -19,7 +19,7 @@ exports.lambdaHandler = async (event, context) => {
         // const ret = await axios(url);
         response = {
             'statusCode': 200,
-            'body': JSON.stringify({
+            'body': JSON.stringify({ 
                 message: 'hello world - test after pushing to git  ',
                 queryParams: event.queryStringParameters,
 
